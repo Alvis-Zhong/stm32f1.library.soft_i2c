@@ -13,7 +13,7 @@
 int main(void)
 {
 	usart_config();
-	printf("I2C and EEPRAM soft simulate\r\n") ; 
+	printf("\r\n I2C and EEPRAM soft simulate \r\n") ; 
 	EE_test() ;
 	while(1)
 	{

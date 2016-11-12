@@ -1,5 +1,5 @@
-#ifndef __EE_H
-#define __EE_H
+#ifndef __BSP_I2C_EE_H
+#define __BSP_I2C_EE_H
 
 #include "stm32f10x.h"
 #include "bsp_i2c_gpio.h"

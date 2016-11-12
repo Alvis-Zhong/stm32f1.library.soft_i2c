@@ -31,12 +31,13 @@ static void i2c_delay(void)
 void i2c_start(void)
 {
 	//SCL为高电平的时候，SDA由高电平变为低电平，产生一个下降沿信号，该信号就是I2C起始信号
-	I2C_SCL_1 ;	
-	I2C_SDA_1 ;	
+	I2C_SDA_1 ;
+	I2C_SCL_1 ;		
 	i2c_delay() ;	
 	I2C_SDA_0 ;	
 	i2c_delay() ;
-	I2C_SCL_0 ;		
+	I2C_SCL_0 ;	
+	i2c_delay() ;	
 }
 
 
@@ -49,8 +50,8 @@ void i2c_start(void)
 void i2c_end(void)
 {
 	// SCL为高电平的时候,SDA由低电平置为高电平，产生一个上升沿信号，该信号就是I2C的结束信号
-	I2C_SCL_1 ; 
 	I2C_SDA_0 ; 
+	I2C_SCL_1 ; 
 	i2c_delay() ;
 	I2C_SDA_1 ;
 }	
@@ -62,13 +63,11 @@ void i2c_end(void)
     *函数功能	CPU向I2C总线设备写入8bit数据
     *返回值	无
 *************************************************************/
-void i2c_writebits(u8 data)
+void i2c_writebits(uint8_t data)
 {
-	u8 i ;				
+	uint8_t i ;				
 	for(i=0;i<8;i++)		//一次数据传输传输8位
-	{
-		I2C_SCL_1 ;		//时钟信号置为高电平				
-		i2c_delay() ;		
+	{							
 		if(data & 0x80)		//从高位开始传输数据
 		{
 			I2C_SDA_1 ;	//如果传输位为高电平，输出高电平
@@ -77,14 +76,16 @@ void i2c_writebits(u8 data)
 		{
 			I2C_SDA_0 ; 	//如果传输位为低电平，输出低电平
 		}
+		i2c_delay() ;
+		I2C_SCL_1 ;		//时钟信号置为高电平
 		i2c_delay();
 		I2C_SCL_0 ; 		//时钟信号置为低电平
-		i2c_delay();
 		if(i==7)
 		{
 			I2C_SDA_1 ;	//释放SDA总线
 		}
 		data<<=1 ; 		//传输的数据左移一位，传输数据改变
+		i2c_delay();
 	}	
 }
 
@@ -96,8 +97,8 @@ void i2c_writebits(u8 data)
 *************************************************************/
 uint8_t i2c_readbits(void)
 {
-	u8 i ;		
-	u8 value=0 ; 
+	uint8_t i ;		
+	uint8_t value=0 ; 
 	for(i=0;i<8;i++)		//一次完整的数据读取为8位
 	{
 		value<<=1 ; 		//接收到的数据从高位开始保存，每次保存一位都要左移
@@ -107,13 +108,8 @@ uint8_t i2c_readbits(void)
 		{
 			value++ ;	//保存输送进来的高电平
 		}
-		i2c_delay();
 		I2C_SCL_0 ; 		//时钟信号置为低电平
 		i2c_delay();
-		if(i==7)
-		{
-			I2C_SDA_1 ; 	//当接收完一次数据，释放SDA总线
-		}
 	}	
 	return value ; 
 }
@@ -196,6 +192,8 @@ void i2c_GPIO_init(void)
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz ;  
 	
 	GPIO_Init( I2C_GPIO_PORT , &GPIO_InitStruct ) ; 
+	
+	i2c_end() ; 
 }
 
 /************************************************************

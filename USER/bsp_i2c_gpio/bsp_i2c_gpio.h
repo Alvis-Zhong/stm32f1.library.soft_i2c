@@ -1,7 +1,8 @@
-#ifndef __I2C_H
-#define __I2C_H
+#ifndef __BSP_I2C_GPIO_H
+#define __BSP_I2C_GPIO_H
 
 #include "stm32f10x.h"
+#include <inttypes.h>
 
 /*	I2C管脚宏定义		*/
 #define 	I2C_GPIO_CLK		RCC_APB2Periph_GPIOB
@@ -23,7 +24,7 @@
 /*	函数声明	*/
 void i2c_start(void) ;		//起始信号函数声明
 void i2c_end(void) ;		//结束信号函数声明
-void i2c_writebits(u8 data) ; 	//CPU发送数据函数声明
+void i2c_writebits(uint8_t data) ; 	//CPU发送数据函数声明
 uint8_t i2c_readbits(void) ; 	//CPU读取数据函数声明
 void i2c_ack(void) ; 		//CPU发送应答信号函数声明
 void i2c_uack(void) ; 		//CPU发送非应答信号声明
